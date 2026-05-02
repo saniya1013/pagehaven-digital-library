@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Browse the PageHaven library — discover free public-domain classics.">
+  <title>Library — PageHaven</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="icon" href="/static/logo.png" type="image/png">
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar" id="navbar-dashboard">
+    <div class="container">
+      <a href="/" class="logo"><img src="/static/logo.png" alt="PageHaven" class="logo-icon"> PageHaven</a>
+      <button class="mobile-menu-toggle" onclick="this.nextElementSibling.classList.toggle('open')" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="nav-links">
+        <a href="/">Home</a>
+        <a href="/home">Library</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="dashboard container page-enter">
+    <div class="dashboard-header">
+      <h1>📚 Explore the Library</h1>
+      <p>Discover timeless classics from the world's greatest authors</p>
+    </div>
+
+    <!-- Search -->
+    <div class="search-bar">
+      <input type="text" id="search-input" placeholder="🔍  Search by title, author, or category..." autocomplete="off">
+    </div>
+
+    <!-- Category Filters -->
+    <div class="filter-chips" id="filter-chips">
+      <button class="chip active" data-category="all">All</button>
+    </div>
+
+    <!-- Book Grid -->
+    <div id="books-container" class="books-grid"></div>
+  </main>
+
+  <script src="/static/script.js"></script>
+</body>
+</html>
