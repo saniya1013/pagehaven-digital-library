@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="https://img.icons8.com/color/96/book-shelf.png" alt="BookVerse Logo" width="80"/>
+  <img src="https://img.icons8.com/color/96/book-shelf.png" alt="PageHaven Logo" width="80"/>
 </p>
 
-<h1 align="center">📖 BookVerse — Your Personal Digital Library</h1>
+<h1 align="center">📖 PageHaven — Your Personal Digital Library</h1>
 
 <p align="center">
   A modern, full-stack E-Library web application built with <strong>FastAPI</strong>, <strong>MongoDB</strong>, and a stunning <strong>Netflix-inspired</strong> frontend.<br/>
@@ -48,11 +48,11 @@
 
 ## 🔍 About the Project
 
-**BookVerse** is a production-quality E-Library web application that provides a clean, modern interface for browsing and reading free public-domain books. The project features a fully decoupled architecture with a FastAPI backend serving RESTful APIs, MongoDB for data persistence, and a hand-crafted vanilla HTML/CSS/JS frontend inspired by Netflix's grid-based design language.
+**PageHaven** is a production-quality E-Library web application that provides a clean, modern interface for browsing and reading free public-domain books. The project features a fully decoupled architecture with a FastAPI backend serving RESTful APIs, MongoDB for data persistence, and a hand-crafted vanilla HTML/CSS/JS frontend inspired by Netflix's grid-based design language.
 
 The library is pre-loaded with **20+ classic titles** sourced from [Project Gutenberg](https://www.gutenberg.org/) and [Open Library](https://openlibrary.org/), with verified working read-online links.
 
-### Why BookVerse?
+### Why PageHaven?
 
 - 🎨 **Production-Level UI** — Not a classroom demo. Polished, animated, responsive.
 - 📚 **Real Books** — Actual public-domain titles with working read-online links.
@@ -119,7 +119,7 @@ The library is pre-loaded with **20+ classic titles** sourced from [Project Gute
 ## 📁 Project Structure
 
 ```
-BookVerse/
+PageHaven/
 │
 ├── .env                          # Environment variables (MONGO_URI, DB_NAME)
 ├── requirements.txt              # Python dependencies
@@ -182,8 +182,8 @@ pip --version       # Should output pip 22+
 1. **Clone the repository** (or download as ZIP):
 
 ```bash
-git clone https://github.com/your-username/bookverse.git
-cd bookverse
+git clone https://github.com/saniya1013/pagehaven-digital-library.git
+cd pagehaven-digital-library
 ```
 
 2. **Create a virtual environment** (recommended):
@@ -239,7 +239,7 @@ PYTHONIOENCODING=utf-8 python scripts/fetch_real_books.py
 Expected output:
 ```
 ==================================================
-  BookVerse — Data Ingestion Script
+  PageHaven — Data Ingestion Script
 ==================================================
 
   📘 Pride and Prejudice... ✅ Inserted
@@ -288,10 +288,10 @@ Open your browser and navigate to:
 
 ### 1. Landing Page (`/`)
 
-The entry point of BookVerse. Features a modern hero section with:
+The entry point of PageHaven. Features a modern hero section with:
 
 - **Animated gradient background** with floating blobs
-- **Brand name** "BookVerse" with gradient typography
+- **Brand name** "PageHaven" with gradient typography
 - **Tagline**: "Your Personal Digital Library"
 - **Feature cards** highlighting key capabilities:
   - 📚 Read Books Online
@@ -332,7 +332,7 @@ A dedicated page for each book featuring:
 
 ## 📡 API Endpoints
 
-BookVerse exposes two RESTful API endpoints:
+PageHaven exposes two RESTful API endpoints:
 
 ### `GET /books`
 
@@ -520,7 +520,7 @@ All books are sourced from **Project Gutenberg** (read-online links) and **Open 
 
 ## 🎨 Design System
 
-BookVerse uses a carefully crafted design system implemented entirely in CSS custom properties.
+PageHaven uses a carefully crafted design system implemented entirely in CSS custom properties.
 
 ### Color Palette
 
@@ -721,6 +721,6 @@ This project is open source and available under the [MIT License](LICENSE).
 ---
 
 <p align="center">
-  Built with ❤️ by <strong>BookVerse Team</strong><br/>
+  Built with ❤️ by <strong>PageHaven Team</strong><br/>
   <sub>If you found this project helpful, please consider giving it a ⭐</sub>
 </p>
