@@ -3,3 +3,4 @@ uvicorn
 pymongo[srv]
 python-dotenv
 requests
+gunicorn
