@@ -623,14 +623,16 @@ button { cursor: pointer; border: none; font-family: inherit; }
   .cta-section h2 { font-size: 1.6rem; }
 
   /* Dashboard */
-  .dashboard { padding-top: 110px; padding-bottom: 40px; }
+  .dashboard { padding-top: 140px; padding-bottom: 40px; }
   .dashboard-header h1 { font-size: 1.6rem; }
   .dashboard-header { margin-bottom: 24px; }
   
   /* On dashboard, we hide user name on very small screens to save space */
-  @media (max-width: 400px) {
+  @media (max-width: 480px) {
     .user-name-nav { display: none; }
-    .navbar .logo { font-size: 1.4rem; }
+    .navbar .logo { font-size: 1.3rem; }
+    .navbar .logo .logo-icon { width: 24px; height: 24px; }
+    .navbar .container { padding: 0 12px; }
   }
   .search-bar { margin-bottom: 24px; }
   .search-bar input { padding: 12px 16px; font-size: 0.9rem; min-width: unset; }
@@ -647,7 +649,7 @@ button { cursor: pointer; border: none; font-family: inherit; }
   .book-card .card-body .category-tag { font-size: 0.65rem; padding: 2px 8px; }
 
   /* Detail page */
-  .detail-page { padding-top: 110px; padding-bottom: 60px; }
+  .detail-page { padding-top: 140px; padding-bottom: 60px; }
   .detail-layout { grid-template-columns: 1fr; gap: 28px; }
   .detail-cover { max-width: 260px; position: static; margin: 0 auto; }
   .detail-info h1 { font-size: 1.8rem; }
