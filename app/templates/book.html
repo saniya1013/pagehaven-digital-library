@@ -147,7 +147,7 @@
           document.getElementById('detail-cover-img').alt = book.title;
           document.getElementById('detail-title').textContent = book.title;
           document.getElementById('detail-author').textContent = `by ${book.author}`;
-          document.title = `${book.title} — BookVerse`;
+          document.title = `${book.title} — PageHaven`;
 
           // Rating stars
           const rating = book.rating || 0;
@@ -174,6 +174,7 @@
           // Read button
           if (book.pdf_url) {
             document.getElementById('detail-read-btn').href = `/read?id=${bookId}`;
+            document.getElementById('detail-read-btn').removeAttribute('target');
           } else {
             document.getElementById('detail-read-btn').style.display = 'none';
           }

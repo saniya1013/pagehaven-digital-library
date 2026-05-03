@@ -118,23 +118,34 @@
     <script>
         const params = new URLSearchParams(window.location.search);
         const bookId = params.get('id');
+        const token = localStorage.getItem('access_token');
 
         if (bookId) {
-            fetch(`/book/${bookId}`)
-                .then(res => res.json())
+            // Include token just in case, although public
+            fetch(`/book/${bookId}`, {
+                headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+            })
+                .then(res => {
+                    if (!res.ok) throw new Error("Failed to fetch book details");
+                    return res.json();
+                })
                 .then(book => {
-                    if (book.pdf_url) {
+                    if (book && book.pdf_url) {
                         document.getElementById('book-title').textContent = book.title;
                         document.title = `Reading: ${book.title} — PageHaven`;
-                        document.getElementById('reader-iframe').src = book.pdf_url;
+                        
+                        // Set iframe source
+                        const iframe = document.getElementById('reader-iframe');
+                        iframe.src = book.pdf_url;
                     } else {
-                        alert("Book URL not found.");
-                        window.history.back();
+                        throw new Error("Book URL not found.");
                     }
                 })
                 .catch(err => {
-                    console.error(err);
-                    alert("Error loading book reader.");
+                    console.error('Reader Error:', err);
+                    document.getElementById('book-title').textContent = "Error Loading Book";
+                    alert("Sorry, we couldn't open this book. Please try again later.");
+                    window.location.href = '/home';
                 });
         } else {
             window.location.href = '/home';
