@@ -629,7 +629,7 @@ button { cursor: pointer; border: none; font-family: inherit; }
 
   /* Dashboard & Content Spacing */
   .dashboard { 
-    padding-top: calc(var(--nav-height) + 2.5rem); 
+    padding-top: calc(var(--nav-height) + 4rem + env(safe-area-inset-top)); 
     padding-bottom: 3rem; 
   }
   .dashboard-header h1 { font-size: 1.6rem; }
@@ -640,10 +640,14 @@ button { cursor: pointer; border: none; font-family: inherit; }
     .user-name-nav { display: none; }
     .navbar .logo { font-size: 1.3rem; }
     .navbar .logo .logo-icon { width: 22px; height: 22px; }
-    .navbar .container { padding: 0 1rem; }
+    .navbar .container { 
+      padding: 0 1rem; 
+      padding-top: env(safe-area-inset-top);
+      height: calc(60px + env(safe-area-inset-top));
+    }
     
-    /* Extra padding for very small mobile screens */
-    .dashboard { padding-top: calc(var(--nav-height) + 3rem); }
+    /* Guaranteed visibility for iOS and smaller devices */
+    .dashboard { padding-top: calc(var(--nav-height) + 5rem + env(safe-area-inset-top)); }
   }
   
   .search-bar { margin-bottom: 1.5rem; }
@@ -661,7 +665,10 @@ button { cursor: pointer; border: none; font-family: inherit; }
   .book-card .card-body .category-tag { font-size: 0.65rem; padding: 2px 8px; }
   
   /* Detail page responsive padding */
-  .detail-page { padding-top: calc(var(--nav-height) + 2.5rem); padding-bottom: 4rem; }
+  .detail-page { 
+    padding-top: calc(var(--nav-height) + 4rem + env(safe-area-inset-top)); 
+    padding-bottom: 4rem; 
+  }
   .detail-layout { grid-template-columns: 1fr; gap: 28px; }
   .detail-cover { max-width: 260px; position: static; margin: 0 auto; }
   .detail-info h1 { font-size: 1.8rem; }
