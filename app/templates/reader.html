@@ -100,6 +100,9 @@
             </a>
             <div class="book-title" id="book-title">Loading book...</div>
             <div class="actions">
+                <a id="external-link-btn" href="#" target="_blank" class="close-reader-btn" style="border-color: var(--primary); color: var(--primary); margin-right: 12px; display: none;">
+                    <span>↗</span> <span>Open in New Tab</span>
+                </a>
                 <button class="close-reader-btn" onclick="window.close(); if(window.history.length > 1) window.history.back(); else window.location.href='/home'">
                     <span>✕</span> <span>Close Reader</span>
                 </button>
@@ -134,9 +137,32 @@
                         document.getElementById('book-title').textContent = book.title;
                         document.title = `Reading: ${book.title} — PageHaven`;
                         
+                        // Show "Open in New Tab" button as a fallback
+                        const externalBtn = document.getElementById('external-link-btn');
+                        externalBtn.href = book.pdf_url;
+                        externalBtn.style.display = 'flex';
+
                         // Set iframe source
                         const iframe = document.getElementById('reader-iframe');
                         iframe.src = book.pdf_url;
+
+                        // Check if it's a known non-iframeable domain
+                        if (book.pdf_url.includes('openlibrary.org') || book.pdf_url.includes('archive.org')) {
+                            // These domains almost always block iframes.
+                            // We show a friendly message overlay.
+                            const loader = document.getElementById('loader');
+                            loader.innerHTML = `
+                                <div style="text-align: center; padding: 20px;">
+                                    <h3 style="color: var(--text);">Security Notice</h3>
+                                    <p style="color: var(--text-secondary); margin: 15px 0;">This book provider requires viewing in a new tab for security.</p>
+                                    <a href="${book.pdf_url}" target="_blank" class="btn btn-primary" style="text-decoration: none;">
+                                        📖 Open Book in New Window
+                                    </a>
+                                </div>
+                            `;
+                            loader.style.opacity = '1';
+                            loader.style.display = 'flex';
+                        }
                     } else {
                         throw new Error("Book URL not found.");
                     }
