@@ -30,9 +30,9 @@ def signup(user_data: UserSignup):
     
     # 2. Hash password and store user
     new_user = {
-        "name": user_data.name,
-        "email": user_data.email,
-        "password": hash_password(user_data.password),
+        "name": str(user_data.name),
+        "email": str(user_data.email).lower(),
+        "password": hash_password(str(user_data.password)),
         "created_at": datetime.utcnow()
     }
     
@@ -47,7 +47,16 @@ def login(user_data: UserLogin):
     user = users_collection.find_one({"email": user_data.email})
     
     # 2. Verify existence and password
-    if not user or not verify_password(user_data.password, user["password"]):
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid email or password"
+        )
+    
+    # Get stored password safely
+    stored_password = str(user.get("password", ""))
+    
+    if not verify_password(str(user_data.password), stored_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid email or password"
