@@ -175,6 +175,26 @@
   }
 
   // ---- Helpers ----
+  async function apiFetch(url, options = {}) {
+    const token = localStorage.getItem('access_token');
+    const defaultOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+      }
+    };
+    
+    const res = await fetch(url, { ...defaultOptions, ...options });
+    
+    if (res.status === 401) {
+      localStorage.clear();
+      window.location.href = '/auth';
+      return null;
+    }
+    
+    return res;
+  }
+
   function showEmpty(title, msg) {
     container.innerHTML = `
       <div class="empty-state" style="grid-column: 1 / -1;">

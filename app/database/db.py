@@ -6,18 +6,19 @@ load_dotenv()
 
 MONGO_URI = os.getenv("MONGO_URI")
 
-client = MongoClient(MONGO_URI)
+if not MONGO_URI:
+    raise ValueError("MONGO_URI not found in environment variables. Check your .env file.")
 
-# test connection
+client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)
+
 try:
+    # Test connection with a ping
     client.admin.command('ping')
-    print("[OK] MongoDB Connected Successfully!")
 except Exception as e:
-    print("[ERROR] Connection Error:", e)
+    print(f"CRITICAL: Failed to connect to MongoDB at {MONGO_URI}: {e}")
+    # In a real production app, we might want to exit here
+    # os._exit(1)
 
-# database
 db = client["elibrary"]
-
-# ✅ collections (IMPORTANT)
 books_collection = db["books"]
 users_collection = db["users"]

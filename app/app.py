@@ -1,25 +1,29 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import JSONResponse
 import os
 
-print("App starting...")
-print("BASE DIR:", os.path.dirname(os.path.abspath(__file__)))
-print("Templates exists:", os.path.exists(os.path.join(os.path.dirname(__file__), "templates")))
-print("Static exists:", os.path.exists(os.path.join(os.path.dirname(__file__), "static")))
-print("Mongo URL:", os.getenv("MONGO_URL"))
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
 
 from app.routes.book_routes import router as book_router
 from app.routes.auth import router as auth_router
 from app.routes.user_routes import router as user_router
 
-app = FastAPI()
+app = FastAPI(
+    title="PageHaven API",
+    description="Professional E-Library Backend",
+    version="1.0.0"
+)
 
-# CORS (safe for now)
+# --- Middleware ---
+app.add_middleware(GZipMiddleware, minimum_size=1000)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["*"], # In strict production, replace with specific domains
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -28,10 +32,17 @@ app.add_middleware(
 # Static (CSS + JS)
 app.mount("/static", StaticFiles(directory=os.path.join(BASE_DIR, "static")), name="static")
 
+# --- Global Error Handlers ---
+@app.exception_handler(404)
+async def not_found_handler(request: Request, exc):
+    return templates.TemplateResponse("index.html", {"request": request}, status_code=404)
 
-
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
+@app.exception_handler(500)
+async def internal_error_handler(request: Request, exc):
+    return JSONResponse(
+        status_code=500,
+        content={"message": "Internal Server Error. Our team is looking into it."}
+    )
 
 # Home page
 @app.get("/")
