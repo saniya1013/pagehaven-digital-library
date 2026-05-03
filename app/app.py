@@ -19,10 +19,13 @@ app.add_middleware(
 )
 
 # Static (CSS + JS)
-app.mount("/static", StaticFiles(directory="app/static"), name="static")
+app.mount("/static", StaticFiles(directory=os.path.join(BASE_DIR, "static")), name="static")
 
 # Templates (HTML)
-templates = Jinja2Templates(directory="app/templates")
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
 
 # Home page
 @app.get("/")
