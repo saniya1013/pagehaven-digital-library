@@ -35,7 +35,7 @@ app.mount("/static", StaticFiles(directory=os.path.join(BASE_DIR, "static")), na
 # --- Global Error Handlers ---
 @app.exception_handler(404)
 async def not_found_handler(request: Request, exc):
-    return templates.TemplateResponse("index.html", {"request": request}, status_code=404)
+    return templates.TemplateResponse(request=request, name="index.html", status_code=404)
 
 @app.exception_handler(500)
 async def internal_error_handler(request: Request, exc):
@@ -47,30 +47,30 @@ async def internal_error_handler(request: Request, exc):
 # Home page
 @app.get("/")
 def home(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+    return templates.TemplateResponse(request=request, name="index.html")
 
 # Dashboard page
 @app.get("/home")
 def dashboard_page(request: Request):
-    return templates.TemplateResponse("home.html", {"request": request})
+    return templates.TemplateResponse(request=request, name="home.html")
 
 # Book page
 @app.get("/book")
 def book_page(request: Request):
-    return templates.TemplateResponse("book.html", {"request": request})
+    return templates.TemplateResponse(request=request, name="book.html")
 
 # Auth page (Login/Signup)
 @app.get("/auth")
 def auth_page(request: Request):
-    return templates.TemplateResponse("auth.html", {"request": request})
+    return templates.TemplateResponse(request=request, name="auth.html")
 
 @app.get("/profile")
 def profile_page(request: Request):
-    return templates.TemplateResponse("profile.html", {"request": request})
+    return templates.TemplateResponse(request=request, name="profile.html")
 
 @app.get("/read")
 def read_page(request: Request):
-    return templates.TemplateResponse("reader.html", {"request": request})
+    return templates.TemplateResponse(request=request, name="reader.html")
 
 # API routes
 app.include_router(book_router)
