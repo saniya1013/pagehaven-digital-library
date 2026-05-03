@@ -627,9 +627,9 @@ button { cursor: pointer; border: none; font-family: inherit; }
   .cta-section { padding: 60px 16px; }
   .cta-section h2 { font-size: 1.6rem; }
 
-  /* Dashboard & Content Spacing */
-  .dashboard { 
-    padding-top: calc(var(--nav-height) + 4rem + env(safe-area-inset-top)); 
+  /* Dashboard & Content Spacing — Absolute fix for iOS/Android overlap */
+  .dashboard, .detail-page { 
+    padding-top: 180px !important; 
     padding-bottom: 3rem; 
   }
   .dashboard-header h1 { font-size: 1.6rem; }
@@ -642,12 +642,8 @@ button { cursor: pointer; border: none; font-family: inherit; }
     .navbar .logo .logo-icon { width: 22px; height: 22px; }
     .navbar .container { 
       padding: 0 1rem; 
-      padding-top: env(safe-area-inset-top);
-      height: calc(60px + env(safe-area-inset-top));
+      height: 70px !important;
     }
-    
-    /* Guaranteed visibility for iOS and smaller devices */
-    .dashboard { padding-top: calc(var(--nav-height) + 5rem + env(safe-area-inset-top)); }
   }
   
   .search-bar { margin-bottom: 1.5rem; }
@@ -664,11 +660,7 @@ button { cursor: pointer; border: none; font-family: inherit; }
   .book-card .card-body .category-tags { display: none; }
   .book-card .card-body .category-tag { font-size: 0.65rem; padding: 2px 8px; }
   
-  /* Detail page responsive padding */
-  .detail-page { 
-    padding-top: calc(var(--nav-height) + 4rem + env(safe-area-inset-top)); 
-    padding-bottom: 4rem; 
-  }
+  /* Detail layout adjustments */
   .detail-layout { grid-template-columns: 1fr; gap: 28px; }
   .detail-cover { max-width: 260px; position: static; margin: 0 auto; }
   .detail-info h1 { font-size: 1.8rem; }
