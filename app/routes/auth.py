@@ -21,8 +21,8 @@ class UserLogin(BaseModel):
 @router.post("/signup")
 def signup(user_data: UserSignup):
     """Signup a new user."""
-    # 1. Check if user already exists
-    if users_collection.find_one({"email": user_data.email}):
+    # 1. Check if user already exists (case-insensitive)
+    if users_collection.find_one({"email": str(user_data.email).lower()}):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Email already registered"
@@ -43,8 +43,8 @@ def signup(user_data: UserSignup):
 @router.post("/login")
 def login(user_data: UserLogin):
     """Login a user and return a JWT token."""
-    # 1. Find user by email
-    user = users_collection.find_one({"email": user_data.email})
+    # 1. Find user by email (normalize to lowercase)
+    user = users_collection.find_one({"email": str(user_data.email).lower()})
     
     # 2. Verify existence and password
     if not user:
