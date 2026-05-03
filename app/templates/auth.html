@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login / Signup — PageHaven</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="icon" href="/static/logo.png" type="image/png">
+    <style>
+        .auth-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #f0edff 0%, #ffffff 100%);
+            padding: 20px;
+        }
+        .auth-card {
+            background: white;
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 10px 40px rgba(99, 102, 241, 0.1);
+            width: 100%;
+            max-width: 400px;
+            animation: fadeUp 0.6s ease-out;
+        }
+        .auth-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        .auth-header img {
+            width: 48px;
+            margin-bottom: 16px;
+        }
+        .auth-header h1 {
+            font-size: 1.8rem;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+        .auth-header p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--text);
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1.5px solid var(--border);
+            border-radius: 12px;
+            font-size: 0.95rem;
+            transition: var(--transition);
+        }
+        .form-group input:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+        .auth-btn {
+            width: 100%;
+            margin-top: 10px;
+        }
+        .auth-footer {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        .auth-footer a {
+            color: var(--primary);
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .error-msg {
+            color: #ef4444;
+            background: #fee2e2;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            margin-bottom: 20px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <img src="/static/logo.png" alt="Logo">
+                <h1 id="auth-title">Welcome Back</h1>
+                <p id="auth-subtitle">Log in to your PageHaven account</p>
+            </div>
+
+            <div id="error-box" class="error-msg"></div>
+
+            <form id="auth-form">
+                <div class="form-group" id="name-group" style="display: none;">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" placeholder="John Doe">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" placeholder="name@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn btn-primary auth-btn" id="submit-btn">Login</button>
+            </form>
+
+            <div class="auth-footer">
+                <span id="toggle-text">Don't have an account?</span>
+                <a href="#" id="toggle-auth">Sign Up</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let isLogin = true;
+        const form = document.getElementById('auth-form');
+        const toggleBtn = document.getElementById('toggle-auth');
+        const errorBox = document.getElementById('error-box');
+
+        toggleBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            isLogin = !isLogin;
+            
+            document.getElementById('auth-title').textContent = isLogin ? 'Welcome Back' : 'Create Account';
+            document.getElementById('auth-subtitle').textContent = isLogin ? 'Log in to your PageHaven account' : 'Join our community of readers';
+            document.getElementById('submit-btn').textContent = isLogin ? 'Login' : 'Sign Up';
+            document.getElementById('name-group').style.display = isLogin ? 'none' : 'block';
+            document.getElementById('toggle-text').textContent = isLogin ? "Don't have an account?" : "Already have an account?";
+            toggleBtn.textContent = isLogin ? 'Sign Up' : 'Login';
+            errorBox.style.display = 'none';
+        });
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            errorBox.style.display = 'none';
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const name = document.getElementById('name').value;
+
+            const endpoint = isLogin ? '/login' : '/signup';
+            const body = isLogin ? { email, password } : { name, email, password };
+
+            try {
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.detail || 'Something went wrong');
+                }
+
+                if (isLogin) {
+                    // Store token and user info
+                    localStorage.setItem('access_token', data.access_token);
+                    localStorage.setItem('user_name', data.name || email.split('@')[0]);
+                    window.location.href = '/home';
+                } else {
+                    // After signup, switch to login
+                    alert('Signup successful! Please login.');
+                    toggleBtn.click();
+                }
+            } catch (err) {
+                errorBox.textContent = err.message;
+                errorBox.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -67,17 +67,17 @@ The library is pre-loaded with **20+ classic titles** sourced from [Project Gute
 | Feature | Description |
 |---------|-------------|
 | **Landing Page** | Beautifully designed hero section with animated gradient blobs, feature cards, and CTA |
+| **User Profiles** | Full account management system with custom bios, avatars, and "Favorite Genre" tracking |
+| **In-App Reader** | Immersive reading experience with an embedded reader header and iframe integration |
+| **Search Suggestions**| Real-time auto-suggestions as you type, powered by regex-based database matching |
+| **Manga Integration** | Dedicated manga section with popular titles like *Death Note*, *Naruto*, and *One Piece* |
+| **Avatar System** | Support for custom image uploads with automatic initials-based fallback avatars |
 | **Book Dashboard** | Netflix-style responsive grid with book covers, ratings, and hover animations |
-| **Real-Time Search** | Debounced search across titles, authors, and categories |
-| **Category Filtering** | Dynamic filter chips auto-generated from book data |
-| **Book Detail View** | Full book info — cover, author, star rating, description, category tags |
-| **Read Online** | One-click "Read Book" button opens the book in a new tab via Project Gutenberg |
-| **Data Ingestion** | Standalone Python script to fetch and seed real book data into MongoDB |
-| **Upsert Logic** | No duplicate books — script can be safely re-run anytime |
-| **URL Verification** | Ingestion script validates every book link before inserting |
-| **Responsive Design** | Fully responsive from desktop (1280px) to mobile (320px) |
-| **Smooth Animations** | Fade-in cards, hover scale effects, gradient transitions |
-| **Loading & Error States** | Spinners, empty state messages, and graceful error handling |
+| **Category Filtering** | Dynamic filter chips auto-generated from book data (Now supports reading preferences) |
+| **Responsive Design** | Fully optimized for mobile with adaptive layouts and collapsed navigation |
+| **Data Ingestion** | Robust Python script to fetch and seed real book data (25+ titles included) |
+| **Smooth Animations** | Glassmorphism headers, fade-in cards, hover scale effects, and 3D tilts |
+| **Secure Auth** | JWT-based authentication system with login, signup, and protected profile routes |
 
 ---
 
@@ -327,122 +327,71 @@ A dedicated page for each book featuring:
 - **Description** — Rich, readable text block
 - **"Read Book" button** — Opens the book on Project Gutenberg in a new tab (`target="_blank"`)
 - **Back navigation** — Button + browser history support
+## 🚀 API Endpoints
+
+### 🔑 Authentication
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/auth/register` | `POST` | Create a new user account |
+| `/auth/login` | `POST` | Authenticate and receive a JWT token |
+
+### 👤 User Profile
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/user/me` | `GET` | Get current logged-in user profile |
+| `/user/update` | `PUT` | Update bio, preferences, and profile data |
+| `/user/upload-avatar`| `POST` | Upload a new profile picture |
+
+### 📚 Books
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/books` | `GET` | Get all books in the library |
+| `/book/{id}` | `GET` | Get details for a specific book |
+| `/books/suggest` | `GET` | Get real-time title suggestions |
+| `/recommend/{id}` | `GET` | Get similar book recommendations |
 
 ---
-
-## 📡 API Endpoints
-
-PageHaven exposes two RESTful API endpoints:
-
-### `GET /books`
-
-Returns all books in the library.
-
-**Request:**
-```http
-GET http://127.0.0.1:8000/books
-```
-
-**Response** `200 OK`:
-```json
-[
-  {
-    "_id": "6813c3a1f5e2a1b2c3d4e5f6",
-    "title": "Pride and Prejudice",
-    "author": "Jane Austen",
-    "category": ["classic", "romance"],
-    "description": "A masterpiece of wit and social observation...",
-    "rating": 4.8,
-    "cover": "https://covers.openlibrary.org/b/id/8226191-L.jpg",
-    "pdf_url": "https://www.gutenberg.org/ebooks/1342.html.images"
-  },
-  ...
-]
-```
-
-**Error Response:**
-```json
-{ "error": "Connection error message" }
-```
-
----
-
-### `GET /book/{book_id}`
-
-Returns a single book by its MongoDB ObjectId.
-
-**Request:**
-```http
-GET http://127.0.0.1:8000/book/6813c3a1f5e2a1b2c3d4e5f6
-```
-
-**Response** `200 OK`:
-```json
-{
-  "_id": "6813c3a1f5e2a1b2c3d4e5f6",
-  "title": "Pride and Prejudice",
-  "author": "Jane Austen",
-  "category": ["classic", "romance"],
-  "description": "A masterpiece of wit and social observation...",
-  "rating": 4.8,
-  "cover": "https://covers.openlibrary.org/b/id/8226191-L.jpg",
-  "pdf_url": "https://www.gutenberg.org/ebooks/1342.html.images"
-}
-```
-
-**Error Response (book not found):**
-```json
-{ "error": "Book not found" }
-```
-
-**Error Response (invalid ID format):**
-```json
-{ "error": "'invalid_id' is not a valid ObjectId..." }
-```
 
 ---
 
 ## 🗄 Database Schema
 
 **Database:** `elibrary`  
-**Collection:** `books`
-
-Each document in the `books` collection follows this schema:
-
-```json
-{
-  "_id": "ObjectId (auto-generated by MongoDB)",
-  "title": "String — Book title",
-  "author": "String — Author name",
-  "category": ["Array of Strings — Genre/category tags"],
-  "description": "String — Book summary/synopsis",
-  "rating": "Float — Rating from 0.0 to 5.0",
-  "cover": "String — URL to cover image (Open Library Covers API)",
-  "pdf_url": "String — URL to read the book online (Project Gutenberg)"
-}
-```
-
-### Example Document
-
-```json
-{
-  "_id": "6813c3a1f5e2a1b2c3d4e5f6",
-  "title": "The Adventures of Sherlock Holmes",
-  "author": "Arthur Conan Doyle",
-  "category": ["mystery", "classic"],
-  "description": "Twelve brilliant short stories featuring the legendary detective Sherlock Holmes and his loyal companion Dr. Watson, solving London's most baffling crimes.",
-  "rating": 4.7,
-  "cover": "https://covers.openlibrary.org/b/id/12645171-L.jpg",
-  "pdf_url": "https://www.gutenberg.org/ebooks/1661.html.images"
-}
-```
+**Collection:** `books` / `users`
 
 ### Collections
-
 | Collection | Purpose |
 |------------|---------|
-| `books` | Stores all book documents |
-| `users` | Reserved for future user authentication feature |
+| `books` | Stores all book documents, including classic literature and manga |
+| `users` | Manages user accounts, profiles, bios, and reading preferences |
+
+### 👤 User Schema
+```json
+{
+  "_id": "ObjectId",
+  "name": "String — Full name",
+  "email": "String — Unique email address",
+  "password": "String — Hashed password (bcrypt)",
+  "bio": "String — User biography",
+  "profile_pic": "String — URL to uploaded profile picture",
+  "favorite_category": "String — User's preferred reading genre",
+  "created_at": "DateTime — Account creation timestamp"
+}
+```
+
+### 📚 Book Schema
+```json
+{
+  "_id": "ObjectId",
+  "title": "String — Book title",
+  "author": "String — Author name",
+  "category": ["Array of Strings — e.g., ['manga', 'action', 'fantasy']"],
+  "description": "String — Book summary",
+  "rating": "Float — 0.0 to 5.0",
+  "cover": "String — Cover image URL",
+  "pdf_url": "String — Embedded reader compatible URL"
+}
+```
 
 ---
 
@@ -513,8 +462,13 @@ The library comes pre-loaded with **20 curated public-domain classics**:
 | 18 | Grimm's Fairy Tales | Brothers Grimm | Fantasy, Classic | ⭐ 4.4 |
 | 19 | The Strange Case of Dr. Jekyll and Mr. Hyde | Robert Louis Stevenson | Horror, Classic | ⭐ 4.5 |
 | 20 | The Prince | Niccolò Machiavelli | Philosophy, History | ⭐ 4.3 |
+| 21 | Death Note | Tsugumi Ohba | Manga, Mystery, Supernatural | ⭐ 4.9 |
+| 22 | Naruto | Masashi Kishimoto | Manga, Action, Adventure | ⭐ 4.8 |
+| 23 | One Piece | Eiichiro Oda | Manga, Adventure, Fantasy | ⭐ 4.9 |
+| 24 | Old Boy | Garon Tsuchiya | Manga, Seinen, Mystery | ⭐ 4.7 |
+| 25 | Lone Wolf and Cub | Kazuo Koike | Manga, Samurai, Seinen | ⭐ 4.8 |
 
-All books are sourced from **Project Gutenberg** (read-online links) and **Open Library** (cover images).
+All books are sourced from **Project Gutenberg**, **Open Library**, and popular free manga archives.
 
 ---
 
@@ -721,6 +675,6 @@ This project is open source and available under the [MIT License](LICENSE).
 ---
 
 <p align="center">
-  Built with ❤️ by <strong>PageHaven Team</strong><br/>
-  <sub>If you found this project helpful, please consider giving it a ⭐</sub>
+  Developed by Saniya & Team ❤️<br/>
+  <sub>⭐ Star this repo if you found it useful</sub>
 </p>

@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile — PageHaven</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="icon" href="/static/logo.png" type="image/png">
+    <style>
+        .profile-wrapper {
+            padding-top: 100px;
+            padding-bottom: 60px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .profile-card {
+            background: white;
+            border-radius: 24px;
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+        .profile-header {
+            background: var(--gradient);
+            height: 120px;
+            position: relative;
+        }
+        .profile-body {
+            padding: 40px;
+            padding-top: 70px;
+            position: relative;
+            text-align: center;
+        }
+        .profile-pic-container {
+            position: absolute;
+            top: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 5px solid white;
+            background: #f8fafc;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+        .profile-pic-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .profile-pic-container .initials {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            background: var(--gradient-subtle);
+        }
+        .user-name { font-size: 2rem; font-weight: 800; margin-bottom: 4px; color: var(--text); }
+        .user-email { color: var(--text-secondary); font-size: 1rem; margin-bottom: 24px; }
+        
+        .profile-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 32px;
+            text-align: left;
+        }
+        .info-item {
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+        }
+        .info-item label {
+            display: block;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+        .info-item span {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+        
+        .bio-section {
+            margin-top: 32px;
+            text-align: left;
+            padding: 24px;
+            background: var(--gradient-subtle);
+            border-radius: 16px;
+            color: var(--primary);
+            line-height: 1.6;
+        }
+        
+        .profile-actions {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin-top: 40px;
+        }
+
+        /* Edit Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: fadeIn 0.3s ease-out;
+        }
+        .modal-content {
+            background: white;
+            padding: 32px;
+            border-radius: 28px;
+            width: 100%;
+            max-width: 480px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            animation: scaleUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+        }
+        .modal-header h2 { font-size: 1.5rem; font-weight: 800; color: var(--text); }
+        .close-btn { 
+            cursor: pointer; font-size: 1.2rem; width: 32px; height: 32px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 50%; background: #f1f5f9; transition: var(--transition);
+        }
+        .close-btn:hover { background: #e2e8f0; color: #ef4444; }
+
+        /* Form Styling */
+        .edit-form-group { margin-bottom: 20px; text-align: left; }
+        .edit-form-group label {
+            display: block; font-size: 0.85rem; font-weight: 700;
+            color: var(--text); margin-bottom: 8px; margin-left: 4px;
+        }
+        .edit-form-group input, .edit-form-group textarea {
+            width: 100%; padding: 12px 16px; border-radius: 14px;
+            border: 2px solid #e2e8f0; font-size: 0.95rem; font-family: inherit;
+            transition: all 0.3s ease;
+        }
+        .edit-form-group input:focus, .edit-form-group textarea:focus {
+            border-color: var(--primary); outline: none; background: #fff;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        /* Avatar Upload Styling */
+        .avatar-upload-section {
+            display: flex; flex-direction: column; align-items: center;
+            margin-bottom: 32px; padding: 20px; background: #f8fafc;
+            border-radius: 20px; border: 2px dashed #e2e8f0;
+        }
+        #preview-img-container {
+            width: 100px; height: 100px; border-radius: 50%;
+            overflow: hidden; border: 4px solid white;
+            box-shadow: var(--shadow-md); margin-bottom: 16px;
+            background: var(--gradient-subtle);
+        }
+        #preview-img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .file-input-wrapper { position: relative; overflow: hidden; display: inline-block; }
+        .file-input-wrapper input[type=file] {
+            position: absolute; left: 0; top: 0; opacity: 0; cursor: pointer; height: 100%; width: 100%;
+        }
+        .btn-upload {
+            padding: 8px 20px; font-size: 0.85rem; font-weight: 600;
+            background: white; border: 1px solid var(--border);
+            border-radius: 10px; cursor: pointer; transition: var(--transition);
+        }
+        .btn-upload:hover { border-color: var(--primary); color: var(--primary); }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes scaleUp { from { transform: scale(0.95) translateY(10px); opacity: 0; } to { transform: scale(1) translateY(0); opacity: 1; } }
+
+    </style>
+</head>
+<body>
+    <nav class="navbar scrolled">
+        <div class="container">
+            <a href="/home" class="logo"><img src="/static/logo.png" alt="Logo" class="logo-icon"> PageHaven</a>
+            <div class="nav-links">
+                <div class="profile-dropdown" onclick="document.getElementById('user-dropdown').classList.toggle('show')">
+                    <span class="user-name-nav" id="nav-user-name">User</span>
+                    <div class="profile-avatar" id="nav-user-avatar"></div>
+                    <div class="dropdown-menu" id="user-dropdown">
+                        <a href="/profile" class="dropdown-item">👤 View Profile</a>
+                        <a href="/profile" class="dropdown-item">✏️ Edit Profile</a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" onclick="logout()" class="dropdown-item" style="color: #ef4444;">🚪 Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="profile-wrapper container">
+        <div class="profile-card">
+            <div class="profile-header"></div>
+            <div class="profile-body">
+                <div class="profile-pic-container" id="profile-pic-box">
+                    <!-- Loaded via JS -->
+                </div>
+                <h1 class="user-name" id="display-name">Loading...</h1>
+                <p class="user-email" id="display-email">---</p>
+                
+                <div class="bio-section" id="display-bio">
+                    Welcome to PageHaven. Your digital sanctuary for books.
+                </div>
+
+                <div class="profile-info-grid">
+                    <div class="info-item">
+                        <label>Favorite Genre</label>
+                        <span id="display-category">Not set</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Joined Date</label>
+                        <span id="display-joined">---</span>
+                    </div>
+                </div>
+
+                <div class="profile-actions">
+                    <button class="btn btn-primary" onclick="openEditModal()">✏️ Edit Profile</button>
+                    <button class="btn btn-secondary" onclick="logout()">Logout</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Edit Modal -->
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Profile</h2>
+                <span class="close-btn" onclick="closeEditModal()">&times;</span>
+            </div>
+            <form id="edit-form">
+                <div class="avatar-upload-section">
+                    <div id="preview-img-container">
+                        <img id="preview-img" src="" alt="Preview">
+                    </div>
+                    <div class="file-input-wrapper">
+                        <button type="button" class="btn-upload">📸 Change Photo</button>
+                        <input type="file" id="pic-upload" accept="image/jpeg, image/png" onchange="previewFile()">
+                    </div>
+                    <p style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 10px;">JPG or PNG only</p>
+                </div>
+
+                <div class="edit-form-group">
+                    <label for="edit-name">Full Name</label>
+                    <input type="text" id="edit-name" placeholder="Your name" required>
+                </div>
+                
+                <div class="edit-form-group">
+                    <label for="edit-bio">Bio</label>
+                    <textarea id="edit-bio" rows="3" placeholder="Tell us about yourself..."></textarea>
+                </div>
+                
+                <div class="edit-form-group">
+                    <label for="edit-category">Favorite Genre</label>
+                    <input type="text" id="edit-category" placeholder="e.g. Fiction, History, Science">
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width:100%; margin-top: 10px; padding: 14px;">
+                    ✨ Save Changes
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('access_token');
+        if (!token) window.location.href = '/auth';
+
+        async function fetchUser() {
+            const res = await fetch('/user/me', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (res.status === 401) logout();
+            const user = await res.json();
+            
+            document.getElementById('display-name').textContent = user.name;
+            document.getElementById('display-email').textContent = user.email;
+            document.getElementById('display-bio').textContent = user.bio || "No bio added yet.";
+            document.getElementById('display-category').textContent = user.favorite_category || "Not provided";
+            
+            const date = new Date(user.created_at);
+            document.getElementById('display-joined').textContent = date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+            // Profile Pic or Initials
+            const picBox = document.getElementById('profile-pic-box');
+            if (user.profile_pic) {
+                picBox.innerHTML = `<img src="${user.profile_pic}" alt="Profile">`;
+                document.getElementById('preview-img').src = user.profile_pic;
+            } else {
+                const initials = user.name.split(' ').map(n => n[0]).join('').toUpperCase();
+                picBox.innerHTML = `<div class="initials">${initials}</div>`;
+                document.getElementById('preview-img').src = '';
+            }
+
+            // Populate form
+            document.getElementById('edit-name').value = user.name;
+            document.getElementById('edit-bio').value = user.bio || '';
+            document.getElementById('edit-category').value = user.favorite_category || '';
+
+            // ✅ Update Navbar too
+            document.getElementById('nav-user-name').textContent = user.name.split(' ')[0];
+            const navAvatar = document.getElementById('nav-user-avatar');
+            if (user.profile_pic) {
+                navAvatar.innerHTML = `<img src="${user.profile_pic}" alt="">`;
+            } else {
+                const initials = user.name.split(' ').map(n => n[0]).join('').toUpperCase();
+                navAvatar.innerHTML = `<span class="avatar-initials">${initials}</span>`;
+            }
+        }
+
+        // Close dropdown when clicking outside
+        window.onclick = function(event) {
+            if (!event.target.closest('.profile-dropdown')) {
+                const dropdowns = document.getElementsByClassName("dropdown-menu");
+                for (let i = 0; i < dropdowns.length; i++) {
+                    dropdowns[i].classList.remove('show');
+                }
+            }
+        }
+
+        function openEditModal() { document.getElementById('edit-modal').style.display = 'flex'; }
+        function closeEditModal() { document.getElementById('edit-modal').style.display = 'none'; }
+
+        function previewFile() {
+            const preview = document.getElementById('preview-img');
+            const file = document.getElementById('pic-upload').files[0];
+            const reader = new FileReader();
+            reader.onloadend = () => preview.src = reader.result;
+            if (file) reader.readAsDataURL(file);
+        }
+
+        document.getElementById('edit-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData();
+            formData.append('name', document.getElementById('edit-name').value);
+            formData.append('bio', document.getElementById('edit-bio').value);
+            formData.append('favorite_category', document.getElementById('edit-category').value);
+
+            // Update info
+            const updateRes = await fetch('/user/update', {
+                method: 'PUT',
+                headers: { 'Authorization': `Bearer ${token}` },
+                body: formData
+            });
+
+            // Update photo if selected
+            const fileInput = document.getElementById('pic-upload');
+            if (fileInput.files[0]) {
+                const picData = new FormData();
+                picData.append('file', fileInput.files[0]);
+                await fetch('/user/upload-profile-pic', {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    body: picData
+                });
+            }
+
+            if (updateRes.ok) {
+                alert('Profile updated!');
+                closeEditModal();
+                fetchUser();
+            }
+        });
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = '/auth';
+        }
+
+        fetchUser();
+    </script>
+</body>
+</html>

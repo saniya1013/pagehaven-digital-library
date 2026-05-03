@@ -4,6 +4,8 @@ from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 
 from app.routes.book_routes import router as book_router
+from app.routes.auth import router as auth_router
+from app.routes.user_routes import router as user_router
 
 app = FastAPI()
 
@@ -37,5 +39,20 @@ def dashboard_page(request: Request):
 def book_page(request: Request):
     return templates.TemplateResponse("book.html", {"request": request})
 
+# Auth page (Login/Signup)
+@app.get("/auth")
+def auth_page(request: Request):
+    return templates.TemplateResponse("auth.html", {"request": request})
+
+@app.get("/profile")
+def profile_page(request: Request):
+    return templates.TemplateResponse("profile.html", {"request": request})
+
+@app.get("/read")
+def read_page(request: Request):
+    return templates.TemplateResponse("reader.html", {"request": request})
+
 # API routes
 app.include_router(book_router)
+app.include_router(auth_router)
+app.include_router(user_router)

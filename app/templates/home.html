@@ -12,16 +12,63 @@
   <!-- Navbar -->
   <nav class="navbar" id="navbar-dashboard">
     <div class="container">
-      <a href="/" class="logo"><img src="/static/logo.png" alt="PageHaven" class="logo-icon"> PageHaven</a>
+      <a href="/home" class="logo"><img src="/static/logo.png" alt="PageHaven" class="logo-icon"> PageHaven</a>
       <button class="mobile-menu-toggle" onclick="this.nextElementSibling.classList.toggle('open')" aria-label="Menu">
         <span></span><span></span><span></span>
       </button>
-      <div class="nav-links">
-        <a href="/">Home</a>
-        <a href="/home">Library</a>
+      <div class="nav-links" id="nav-links">
+        <div class="profile-dropdown" onclick="document.getElementById('user-dropdown').classList.toggle('show')">
+          <span class="user-name-nav" id="nav-user-name">User</span>
+          <div class="profile-avatar" id="nav-user-avatar"></div>
+          <div class="dropdown-menu" id="user-dropdown">
+            <a href="/profile" class="dropdown-item">👤 View Profile</a>
+            <a href="/profile" class="dropdown-item">✏️ Edit Profile</a>
+            <div class="dropdown-divider"></div>
+            <a href="#" onclick="logout()" class="dropdown-item" style="color: #ef4444;">🚪 Logout</a>
+          </div>
+        </div>
       </div>
     </div>
   </nav>
+
+  <script>
+    if (!localStorage.getItem('access_token')) {
+      window.location.href = '/auth';
+    }
+
+    async function initNavbar() {
+        const token = localStorage.getItem('access_token');
+        const res = await fetch('/user/me', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (res.ok) {
+            const user = await res.json();
+            document.getElementById('nav-user-name').textContent = user.name.split(' ')[0];
+            const avatar = document.getElementById('nav-user-avatar');
+            if (user.profile_pic) {
+                avatar.innerHTML = `<img src="${user.profile_pic}" alt="">`;
+            } else {
+                const initials = user.name.split(' ').map(n => n[0]).join('').toUpperCase();
+                avatar.innerHTML = `<span class="avatar-initials">${initials}</span>`;
+            }
+        }
+    }
+
+    function logout() {
+      localStorage.clear();
+      window.location.href = '/auth';
+    }
+
+    window.onclick = function(event) {
+        if (!event.target.closest('.profile-dropdown')) {
+            const dropdowns = document.getElementsByClassName("dropdown-menu");
+            for (let i = 0; i < dropdowns.length; i++) {
+                dropdowns[i].classList.remove('show');
+            }
+        }
+    }
+    initNavbar();
+  </script>
 
   <main class="dashboard container page-enter">
     <div class="dashboard-header">
@@ -30,8 +77,9 @@
     </div>
 
     <!-- Search -->
-    <div class="search-bar">
+    <div class="search-bar" style="position: relative;">
       <input type="text" id="search-input" placeholder="🔍  Search by title, author, or category..." autocomplete="off">
+      <div id="search-suggestions" class="search-suggestions"></div>
     </div>
 
     <!-- Category Filters -->

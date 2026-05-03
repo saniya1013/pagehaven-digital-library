@@ -12,16 +12,63 @@
   <!-- Navbar -->
   <nav class="navbar" id="navbar-detail">
     <div class="container">
-      <a href="/" class="logo"><img src="/static/logo.png" alt="PageHaven" class="logo-icon"> PageHaven</a>
+      <a href="/home" class="logo"><img src="/static/logo.png" alt="PageHaven" class="logo-icon"> PageHaven</a>
       <button class="mobile-menu-toggle" onclick="this.nextElementSibling.classList.toggle('open')" aria-label="Menu">
         <span></span><span></span><span></span>
       </button>
-      <div class="nav-links">
-        <a href="/">Home</a>
-        <a href="/home">Library</a>
+      <div class="nav-links" id="nav-links">
+        <div class="profile-dropdown" onclick="document.getElementById('user-dropdown').classList.toggle('show')">
+          <span class="user-name-nav" id="nav-user-name">User</span>
+          <div class="profile-avatar" id="nav-user-avatar"></div>
+          <div class="dropdown-menu" id="user-dropdown">
+            <a href="/profile" class="dropdown-item">👤 View Profile</a>
+            <a href="/profile" class="dropdown-item">✏️ Edit Profile</a>
+            <div class="dropdown-divider"></div>
+            <a href="#" onclick="logout()" class="dropdown-item" style="color: #ef4444;">🚪 Logout</a>
+          </div>
+        </div>
       </div>
     </div>
   </nav>
+
+  <script>
+    if (!localStorage.getItem('access_token')) {
+      window.location.href = '/auth';
+    }
+
+    async function initNavbar() {
+        const token = localStorage.getItem('access_token');
+        const res = await fetch('/user/me', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (res.ok) {
+            const user = await res.json();
+            document.getElementById('nav-user-name').textContent = user.name.split(' ')[0];
+            const avatar = document.getElementById('nav-user-avatar');
+            if (user.profile_pic) {
+                avatar.innerHTML = `<img src="${user.profile_pic}" alt="">`;
+            } else {
+                const initials = user.name.split(' ').map(n => n[0]).join('').toUpperCase();
+                avatar.innerHTML = `<span class="avatar-initials">${initials}</span>`;
+            }
+        }
+    }
+
+    function logout() {
+      localStorage.clear();
+      window.location.href = '/auth';
+    }
+
+    window.onclick = function(event) {
+        if (!event.target.closest('.profile-dropdown')) {
+            const dropdowns = document.getElementsByClassName("dropdown-menu");
+            for (let i = 0; i < dropdowns.length; i++) {
+                dropdowns[i].classList.remove('show');
+            }
+        }
+    }
+    initNavbar();
+  </script>
 
   <main class="detail-page container page-enter">
     <!-- Back Button -->
@@ -126,19 +173,65 @@
 
           // Read button
           if (book.pdf_url) {
-            document.getElementById('detail-read-btn').href = book.pdf_url;
+            document.getElementById('detail-read-btn').href = `/read?id=${bookId}`;
           } else {
             document.getElementById('detail-read-btn').style.display = 'none';
           }
 
           contentEl.style.display = 'grid';
+          loadRecommendations(bookId);
         })
         .catch(err => {
           console.error('Error loading book:', err);
           loadingEl.style.display = 'none';
           errorEl.style.display = 'block';
         });
+
+      function loadRecommendations(id) {
+        const recSection = document.getElementById('recommendations-section');
+        const recContainer = document.getElementById('recommendations-container');
+        
+        fetch(`/recommend/${id}`)
+          .then(res => res.json())
+          .then(books => {
+            if (books && books.length > 0) {
+              recSection.style.display = 'block';
+              recContainer.innerHTML = books.map(book => `
+                <div class="book-card" onclick="window.location.href='/book?id=${book._id}'">
+                  <div class="cover-wrap">
+                    <img src="${book.cover || ''}" alt="${book.title}" loading="lazy">
+                    <div class="cover-overlay">
+                      <div class="card-badge">Similar</div>
+                    </div>
+                  </div>
+                  <div class="card-body">
+                    <h3>${book.title}</h3>
+                    <p class="author">${book.author}</p>
+                    <div class="rating">
+                      <span class="stars">${'★'.repeat(Math.floor(book.rating || 0))}${(book.rating % 1 >= 0.5) ? '☆' : ''}</span>
+                      <span class="score">${(book.rating || 0).toFixed(1)}</span>
+                    </div>
+                  </div>
+                </div>
+              `).join('');
+            }
+          })
+          .catch(err => console.error('Error loading recommendations:', err));
+      }
     })();
   </script>
+  
+  <style>
+    .recommendations { margin-top: 80px; padding-top: 40px; border-top: 1px solid var(--border); }
+    .recommendations h2 { font-family: 'Playfair Display', serif; font-size: 1.8rem; margin-bottom: 32px; }
+    #recommendations-container { margin-bottom: 60px; }
+  </style>
+  
+  <!-- Recommendations Section -->
+  <div id="recommendations-section" class="recommendations container" style="display:none;">
+    <h2>✨ More Like This</h2>
+    <div id="recommendations-container" class="books-grid"></div>
+  </div>
+
 </body>
 </html>

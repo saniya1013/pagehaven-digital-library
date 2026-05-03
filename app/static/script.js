@@ -112,7 +112,47 @@
 
   // ---- Search ----
   if (searchInput) {
-    searchInput.addEventListener('input', debounce(applyFilters, 250));
+    const suggestionBox = document.getElementById('search-suggestions');
+
+    searchInput.addEventListener('input', debounce(async (e) => {
+      const q = e.target.value.trim();
+      
+      // Handle suggestions
+      if (q.length > 1) {
+        const res = await fetch(`/books/suggest?q=${encodeURIComponent(q)}`);
+        const suggestions = await res.json();
+        
+        if (suggestions.length > 0 && !suggestions.error) {
+          suggestionBox.innerHTML = suggestions.map(s => `
+            <div class="suggestion-item" data-id="${s.id}">
+              <span>🔍</span> ${s.title}
+            </div>
+          `).join('');
+          suggestionBox.style.display = 'block';
+        } else {
+          suggestionBox.style.display = 'none';
+        }
+      } else {
+        suggestionBox.style.display = 'none';
+      }
+
+      applyFilters();
+    }, 250));
+
+    // Handle suggestion click
+    suggestionBox.addEventListener('click', (e) => {
+      const item = e.target.closest('.suggestion-item');
+      if (item) {
+        window.location.href = `/book?id=${item.dataset.id}`;
+      }
+    });
+
+    // Hide suggestions when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.search-bar')) {
+        suggestionBox.style.display = 'none';
+      }
+    });
   }
 
   function applyFilters() {

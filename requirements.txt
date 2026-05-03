@@ -1,6 +1,12 @@
-fastapi
+fastapi[all]
+pydantic[email]
 uvicorn
 pymongo[srv]
 python-dotenv
 requests
 gunicorn
+pandas
+scikit-learn
+passlib[bcrypt]
+python-jose[cryptography]
+python-multipart
