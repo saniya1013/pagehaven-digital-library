@@ -12,6 +12,7 @@ templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
 from app.routes.book_routes import router as book_router
 from app.routes.auth import router as auth_router
 from app.routes.user_routes import router as user_router
+from app.routes.ai import router as ai_router
 
 app = FastAPI(
     title="PageHaven API",
@@ -78,3 +79,4 @@ def read_page(request: Request):
 app.include_router(book_router)
 app.include_router(auth_router)
 app.include_router(user_router)
+app.include_router(ai_router)
