@@ -39,9 +39,11 @@ async def not_found_handler(request: Request, exc):
 
 @app.exception_handler(500)
 async def internal_error_handler(request: Request, exc):
+    # Log the full error for Render logs
+    print(f"ERROR 500: {exc}")
     return JSONResponse(
         status_code=500,
-        content={"message": "Internal Server Error. Our team is looking into it."}
+        content={"message": f"Server Error: {str(exc)}"}
     )
 
 # Home page

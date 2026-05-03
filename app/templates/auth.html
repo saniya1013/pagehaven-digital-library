@@ -164,7 +164,9 @@
                 const data = await response.json();
 
                 if (!response.ok) {
-                    throw new Error(data.detail || 'Something went wrong');
+                    // Try to get detailed error from either 'detail' or 'message' field
+                    const errorText = data.detail || data.message || 'Something went wrong';
+                    throw new Error(errorText);
                 }
 
                 if (isLogin) {
@@ -178,6 +180,7 @@
                     toggleBtn.click();
                 }
             } catch (err) {
+                console.error('Auth Error:', err);
                 errorBox.textContent = err.message;
                 errorBox.style.display = 'block';
             }
