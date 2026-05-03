@@ -4,6 +4,12 @@ from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 import os
 
+print("App starting...")
+print("BASE DIR:", os.path.dirname(os.path.abspath(__file__)))
+print("Templates exists:", os.path.exists(os.path.join(os.path.dirname(__file__), "templates")))
+print("Static exists:", os.path.exists(os.path.join(os.path.dirname(__file__), "static")))
+print("Mongo URL:", os.getenv("MONGO_URL"))
+
 from app.routes.book_routes import router as book_router
 from app.routes.auth import router as auth_router
 from app.routes.user_routes import router as user_router
