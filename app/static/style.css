@@ -647,7 +647,7 @@ button { cursor: pointer; border: none; font-family: inherit; }
   .book-card .card-body .category-tag { font-size: 0.65rem; padding: 2px 8px; }
 
   /* Detail page */
-  .detail-page { padding-top: 80px; padding-bottom: 60px; }
+  .detail-page { padding-top: 110px; padding-bottom: 60px; }
   .detail-layout { grid-template-columns: 1fr; gap: 28px; }
   .detail-cover { max-width: 260px; position: static; margin: 0 auto; }
   .detail-info h1 { font-size: 1.8rem; }
