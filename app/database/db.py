@@ -22,3 +22,8 @@ except Exception as e:
 db = client["elibrary"]
 books_collection = db["books"]
 users_collection = db["users"]
+reading_history_collection = db["reading_history"]
+
+# Create indexes for reading history
+reading_history_collection.create_index([("user_id", 1), ("last_accessed", -1)])
+reading_history_collection.create_index([("user_id", 1), ("book_id", 1)], unique=True)

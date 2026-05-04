@@ -240,6 +240,21 @@
                         document.getElementById('book-title').textContent = book.title;
                         document.title = `Reading: ${book.title} — PageHaven`;
                         
+                        // --- Save Reading History ---
+                        if (token) {
+                            fetch('/user/me', { headers: { 'Authorization': `Bearer ${token}` }})
+                                .then(r => r.json())
+                                .then(user => {
+                                    if (user && user._id) {
+                                        fetch('/reading-history/save', {
+                                            method: 'POST',
+                                            headers: { 'Content-Type': 'application/json' },
+                                            body: JSON.stringify({ user_id: user._id, book_id: bookId })
+                                        }).catch(e => console.error("History Save Error:", e));
+                                    }
+                                });
+                        }
+                        
                         let finalUrl = book.pdf_url;
                         if (finalUrl.includes('gutenberg.org/ebooks/')) {
                             const bookIdMatch = finalUrl.match(/\/ebooks\/(\d+)/);
